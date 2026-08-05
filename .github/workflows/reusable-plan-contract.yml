@@ -1,0 +1,22 @@
+# Reusable generated-plan validation for the Evento test fleet.
+name: Reusable generated plan contract
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out without persisted credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          show-progress: false
+          submodules: false
+      - name: Validate generated plan
+        run: node scripts/validate-plan.mjs
