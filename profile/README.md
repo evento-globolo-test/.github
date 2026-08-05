@@ -49,3 +49,13 @@ Nine repositories preserve independent fixtures and scenarios not yet proven red
 These repositories are not deletion candidates merely because a newer generated repository has a similar name. Retirement requires a semantic behavior/history comparison and explicit evidence that every unique invariant is preserved.
 
 Pull requests run deterministic, credential-free checks. Provider, emulator, database, chaos, scale, and soak execution remains scheduled or manually gated.
+
+<!-- org-project-routing:start -->
+## Planning and delivery
+
+- [GitHub Project: evento-globolo-test-project](https://github.com/orgs/evento-globolo-test/projects/1)
+- [Linear planning project](https://linear.app/denman/project/githubcomevento-globolo-test-c65dde2765de)
+- [Detailed project-routing contract](../docs/PROJECTS.md)
+
+GitHub owns code and delivery evidence; Linear owns planning and dependencies. The linked organization Project provides the cross-repository execution view.
+<!-- org-project-routing:end -->
