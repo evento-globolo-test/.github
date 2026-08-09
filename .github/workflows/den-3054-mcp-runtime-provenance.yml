@@ -1,0 +1,68 @@
+name: DEN-3054 MCP runtime provenance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: den-3054-runtime-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  PRODUCTION_REPOSITORY: evento-globolo/evgl-mcp-server.rs
+  PRODUCTION_COMMIT: 7fdb469257496244cf3c6d952acde017cb53f965
+
+jobs:
+  runtime-provenance:
+    name: ${{ matrix.os }} / Rust ${{ matrix.rust }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14, windows-2022]
+        rust: [1.88.0, 1.97.1]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - name: Check out the independent test contract
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          show-progress: false
+
+      - name: Fetch the exact public production commit without a token
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init source
+          git -C source remote add origin "https://github.com/${PRODUCTION_REPOSITORY}.git"
+          git -C source -c protocol.version=2 fetch --no-tags --depth=1 origin "${PRODUCTION_COMMIT}"
+          git -C source checkout --detach FETCH_HEAD
+          test "$(git -C source rev-parse HEAD)" = "${PRODUCTION_COMMIT}"
+
+      - name: Install pinned Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Validate exact source and security invariants
+        run: python contract-tests/den-3054-mcp-runtime/validate_source.py source
+
+      - name: Install pinned Rust toolchain
+        uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt, clippy
+
+      - name: Verify production formatting
+        run: cargo fmt --manifest-path source/Cargo.toml --all -- --check
+
+      - name: Run strict production Clippy
+        run: cargo clippy --manifest-path source/Cargo.toml --locked --all-targets --all-features -- -D warnings
+
+      - name: Execute production unit and real-process contracts
+        run: cargo test --manifest-path source/Cargo.toml --locked --all-targets --all-features
