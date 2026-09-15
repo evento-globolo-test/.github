@@ -1,7 +1,6 @@
 name: Polyglot SDK consumer matrix
 
 on:
-  pull_request:
   push:
     branches: [main]
   schedule:
@@ -29,4 +28,4 @@ jobs:
       lib_path: evgl-libs
       lib_dependency: evento-globolo/evgl-libs
     secrets:
-      read_token: ${{ secrets.TEST_ORG_READ_TOKEN }}
+      read_token: ${{ secrets.TEST_FLEET_READ_TOKEN || secrets.TEST_ORG_READ_TOKEN || github.token }}
