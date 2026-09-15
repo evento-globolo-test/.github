@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "status": "active",
+  "testOwner": {"login": "evento-globolo-test", "id": 313177352, "type": "Organization"},
+  "productionOwner": {"login": "evento-globolo", "id": 313128930, "type": "Organization"},
+  "discoveryScope": {"kind": "organization-current-tips"},
+  "relationshipRegistry": "architecture/repository-relationships.json",
+  "policy": {"suffixInferenceAuthoritative": false, "bindExactDefaultBranchSha": true, "failClosedOnInvisiblePrivateSources": true, "silentPublicFallbackAllowed": false}
+}
